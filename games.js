@@ -1,46 +1,44 @@
 //Global Variables
 const gamePattern = [];
-const userClickedPattern = [];
+let userClickedPattern = [];
 const buttonColours = ["red", "blue", "green", "yellow"];
+let level = 0;
+let started = false; 
 
-const redSound = new Audio("./sounds/red.mp3");
-const blueSound = new Audio("./sounds/blue.mp3");
-const greenSound = new Audio("./sounds/green.mp3");
-const yellowSound = new Audio("./sounds/yellow.mp3");
-const wrongSound = new Audio("./sounds/wrong.mp3");
+$(document).keypress(function() {
+    if (!started) {
+    $("#level-title").html(`Level ${level}`);
+    nextSequence();
+    started = true;
+  }
+});
 
-function nextSequence() {
+function nextSequence() {  
+  userClickedPattern = [];
+  level ++;
+  $("#level-title").html(`Level ${level}`);
+
   let randomNumber = Math.floor(Math.random() * 4);
   let randomChosenColour = buttonColours[randomNumber];
   gamePattern.push(randomChosenColour);
-
-  console.log(randomChosenColour);
+  $(`#${randomChosenColour}`).fadeIn(100).fadeOut(100).fadeIn(100);
   playSound(randomChosenColour);
 }
 
 $("div.btn").click(function(){
 let userChosenColour = $(this).attr("id");
 userClickedPattern.push(userChosenColour);
+// console.log(userClickedPattern);
 new Audio(`./sounds/${userClickedPattern}.mp3`).play();
-console.log(userClickedPattern);
+// console.log(userClickedPattern);
 playSound(userChosenColour);
 animatePress(userChosenColour)
+checkAnswer(userClickedPattern.length - 1);
 });
 
 function playSound(name) {
-  if (name === "red") {
-    $("#red").fadeOut(100).fadeIn(100);
-    redSound.play();
-  } else if (name === "blue") {
-    $("#blue").fadeOut(100).fadeIn(100); 
-    blueSound.play();
-  } else if (name === "green") {
-    $("#green").fadeOut(100).fadeIn(100); 
-    greenSound.play();
-  } else {
-    $("#yellow").fadeOut(100).fadeIn(100);
-    yellowSound.play();
-  }  
+  let audio = new Audio(`sounds/${name}.mp3`);
+  audio.play();
 }
 
 function animatePress(currentColour) {
@@ -48,4 +46,18 @@ function animatePress(currentColour) {
   setTimeout(function() {
     $(`#${currentColour}`).removeClass("pressed");
   }, 100);
+}
+
+function checkAnswer(currentLevel) {
+  if (gamePattern[currentLevel] === userClickedPattern[currentLevel]) {
+    console.log("success");
+    if (userClickedPattern.length === gamePattern.length) {
+      console.log(userClickedPattern.length);
+      setTimeout(function() {
+        nextSequence();
+      }, 1000);
+    }
+  } else {
+    console.log("fail");
+  }
 }
