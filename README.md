@@ -1,0 +1,1 @@
+![image](https://github.com/Toto-Kotaro-Tanaka/udemy-simon-game/blob/main/simon-game.png)
